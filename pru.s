@@ -8,7 +8,7 @@ color_amarillo: .asciz "\033[33m"
 color_azul:     .asciz "\033[34m"
 color_cyan:     .asciz "\033[36m"
 color_magenta:  .asciz "\033[35m"
-msg_separador:  .asciz "\n==================================================\n"
+msg_separador:  .asciz "\n================================================\n"
 
 
 /* UTIL PARA FLOOD_FILL*/
@@ -59,8 +59,8 @@ msg_coordenadas_invalidas: .asciz " ❗❗❗ Coordenadas fuera de rango. Intent
 msg_casilla_repetida: .asciz "⚠ Esta casilla ya fue descubierta. Intente otra.\n"
 msg_generando: .asciz "\n ¡El juego ya comenzó! 🎮\n─────────────✧─────────────\n  ⌛ Generando minas...\n─────────────✧─────────────\n"
 msg_tiempo_juego: .asciz " 💡 Tiempo de juego para "
-msg_tiempo_segundos: .asciz " segundos\n"
-msg_gracias: .asciz "¡Gracias por jugar!\n\n"
+msg_tiempo_segundos: .asciz " seg\n"
+msg_gracias: .asciz "\n+----------------------------------------------+\n|                                              |\n|        ¡Gracias por jugar! 🙌                |\n|      Desarrollado por Grupo 02 💻            |\n|   https://github.com/Corduu/BuscaminasARM    |\n|                                              |\n+----------------------------------------------+\n\n"
 
 /* Archivo de ranking */
 ranking_filename: .asciz "ranking.txt"
@@ -76,7 +76,7 @@ buffer_input: .space 50
 .data
 nombre_label:   .asciz "Nombre: "
 tiempo_label:   .asciz " | Tiempo: "
-segundos_label: .asciz " segundos | Nivel: "
+segundos_label: .asciz " seg | Nivel: "
 
 .text
 
@@ -171,8 +171,6 @@ mostrar_tiempo_final_color:
     bl calcular_tiempo_transcurrido
     bl imprimir_numero
     ldr r1, =msg_tiempo_segundos
-    bl imprimir_string
-    ldr r1, =msg_gracias
     bl imprimir_string
     ldr r1, =color_reset
     bl imprimir_string
@@ -1097,6 +1095,7 @@ casilla_repetida:
     ldr r1, =color_reset
     bl imprimir_string
     b juego_loop
+// ...existing code...
 perder:
     ldr r0, =TIEMPO_FIN
     bl obtener_tiempo
@@ -1121,7 +1120,7 @@ ganar:
     bl imprimir_string
     ldr r1, =color_reset
     bl imprimir_string
-    ldr r2, =color_verde        // <--- color verde
+    ldr r2, =color_verde
     bl mostrar_tiempo_final_color
     bl guardar_en_ranking
     ldr r1, =color_magenta
@@ -1134,6 +1133,9 @@ ganar:
     ldr r1, =color_reset
     bl imprimir_string
     b fin
+
 fin:
+    ldr r1, =msg_gracias      
+    bl imprimir_string        
     mov r7, #1
     swi 0
