@@ -1,0 +1,101 @@
+INICIO
+    // Inicialización de variables y bienvenida
+    generar_semilla_aleatoria()
+    mostrar_mensaje_bienvenida()
+    leer_nombre_usuario()
+    
+    // Selección de tamaño de tablero (si aplica)
+    REPETIR
+        mostrar_opciones_tamaño()
+        leer_opcion_tamaño()
+        SI opcion_válida ENTONCES
+            configurar_tamaño_tablero()
+        SINO
+            mostrar_error_opcion_invalida()
+        FIN_SI
+    HASTA opcion_válida
+    
+    // Selección de dificultad
+    REPETIR
+        mostrar_opciones_dificultad()
+        leer_opcion_dificultad()
+        SI opcion_válida ENTONCES
+            configurar_nivel_dificultad()
+        SINO
+            mostrar_error_opcion_invalida()
+        FIN_SI
+    HASTA opcion_válida
+    
+    // Preparar matrices y variables de juego
+    limpiar_matrices()
+    generar_minas_aleatorias()
+    calcular_objetivo_descubrir()
+    es_primera_jugada = VERDADERO
+    
+    mostrar_tablero()
+    mostrar_progreso()
+    
+    // Bucle principal del juego
+    MIENTRAS jugadas_realizadas < objetivo_descubrir
+        // Leer y validar coordenadas
+        REPETIR
+            leer_fila()
+            SI fila_válida ENTONCES
+                leer_columna()
+                SI columna_válida ENTONCES
+                    SALIR_DEL_BUCLE
+                SINO
+                    mostrar_error_coordenadas()
+                FIN_SI
+
+            SINO
+                mostrar_error_coordenadas()
+            FIN_SI
+        HASTA fila_y_columna_válidas
+        
+        // Validar jugada
+        SI casilla_ya_descubierta ENTONCES
+            mostrar_error_casilla_repetida()
+            CONTINUAR
+        FIN_SI
+        
+        SI hay_mina_en_posicion ENTONCES
+            IR_A perder
+        FIN_SI
+        
+        minas_cercanas = calcular_minas_cercanas(fila, columna)
+        
+        SI es_primera_jugada Y minas_cercanas == 0 ENTONCES
+            flood_fill(fila, columna)
+            es_primera_jugada = FALSO
+        SINO
+            marcar_casilla_descubierta(fila, columna)
+            marcar_en_tablero(fila, columna, minas_cercanas)
+        FIN_SI
+        
+        mostrar_mensaje_seguro()
+        mostrar_tablero()
+        mostrar_progreso()
+    FIN_MIENTRAS
+    
+    // Fin del juego
+    SI jugadas_realizadas >= objetivo_descubrir ENTONCES
+        IR_A ganar
+    FIN_SI
+
+ganar:
+    tiempo_fin = obtener_tiempo_actual()
+    mostrar_mensaje_victoria()
+    calcular_y_mostrar_tiempo_transcurrido()
+    guardar_en_ranking()
+    mostrar_ranking()
+    terminar_programa()
+
+perder:
+    tiempo_fin = obtener_tiempo_actual()
+    mostrar_mensaje_derrota()
+    mostrar_todas_las_minas()
+    mostrar_tablero_final()
+    calcular_y_mostrar_tiempo_transcurrido()
+    terminar_programa()
+FIN
